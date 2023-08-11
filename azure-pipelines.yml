@@ -4,16 +4,20 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+jobs:
+- job: BuildTestDeploy
+  steps:
+  - script: echo Build step - Replace with actual build commands
+    displayName: 'Build Application'
+    
+  - script: echo Run tests - Replace with actual test commands
+    displayName: 'Run Tests'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: echo Deploy to staging - Replace with actual deploy commands
+    displayName: 'Deploy to Staging'
+
