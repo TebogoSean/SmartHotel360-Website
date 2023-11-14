@@ -7,17 +7,40 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
-jobs:
-- job: BuildTestDeploy
-  steps:
-  - script: echo Build step - Replace with actual build commands
-    displayName: 'Build Application'
-    
-  - script: echo Run tests - Replace with actual test commands
-    displayName: 'Run Tests'
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - checkout: self
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - script: dotnet build --configuration Release
+      displayName: 'Build the application'
 
-  - script: echo Deploy to staging - Replace with actual deploy commands
-    displayName: 'Deploy to Staging'
+- stage: Test
+  jobs:
+  - job: Test
+    dependsOn: Build
+    steps:
+    - script: dotnet test --configuration Release
+      displayName: 'Run unit tests'
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+    dependsOn: Test
+    steps:
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: '<YourAzureSubscription>'
+        appType: 'webApp'
+        WebAppName: '<YourWebAppName>'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
 
